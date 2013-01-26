@@ -26,5 +26,5 @@ end
 desc "DeployIt"
 exec :deployIt, :deployproject do |cmd, args|
   cmd.command = "src/#{args.deployproject}/obj/#{config}/Package/#{args.deployproject}.deploy.cmd"
-  cmd.parameters "/Y /U:critchley.sj@gmail.com /P:Ghost510"
+  cmd.parameters "/Y"
 end
