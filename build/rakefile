@@ -6,9 +6,25 @@ config = ENV["config"] || "Debug"
 desc "Default"
 task :default => [:build]
 
+desc "Deploy"
+task :deploy, [:deployproject] => [:packageIt, :deployIt]
+
 desc "Run a sample build using the MSBuildTask"
 msbuild :build do |msb|
   msb.properties = { :configuration => config }
   msb.targets = [ :Clean, :Build ]
   msb.solution = "../src/#{solutionname}.sln"
+end
+
+desc "PackageIt"
+msbuild :packageIt do |msb|
+  msb.properties = { :configuration => config, :DeployOnBuild => "true", :DeployTarget => "Package", :AutoParameterizationWebConfigConnectionStrings => "false" }
+  msb.targets = [ :Clean, :Build, ]
+  msb.solution = "../src/#{solutionname}.sln"
+end
+
+desc "DeployIt"
+exec :deployIt, :deployproject do |cmd, args|
+  cmd.command = "../src/#{args.deployproject}/obj/#{config}/Package/#{args.deployproject}.deploy.cmd"
+  cmd.parameters "/Y /U:critchley.sj@gmail.com /P:Ghost510"
 end
