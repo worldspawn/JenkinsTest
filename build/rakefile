@@ -7,9 +7,9 @@ desc "Default"
 task :default => [:build]
 
 desc "Deploy"
-task :deploy, :deployproject do |t, args|
-	Rake::Task[:packageIt].invoke()
-	Rake::Task[:deployIt].invoke(args[:deployproject])
+task :deploy, [:deployproject, :appname] => :packageIt do |t, args|
+	#Rake::Task[:packageIt].invoke()
+	Rake::Task[:deployIt].invoke(args[:deployproject], args[:appname])
 end
 
 desc "Run a sample build using the MSBuildTask"
@@ -27,8 +27,10 @@ msbuild :packageIt do |msb|
 end
 
 desc "DeployIt"
-exec :deployIt, :deployproject do |cmd, args|
+exec :deployIt, [:deployproject,:appname] do |cmd, args|
 	puts "deployproject is #{args.deployproject}"
+	puts "appname is #{args.appname}"
   cmd.command = "src/#{args.deployproject}/obj/#{config}/Package/#{args.deployproject}.deploy.cmd"
-  cmd.parameters "/Y"
+  cmd.parameters "/Y \"-setparam:name='IIS Web Application Name',kind=providerpath,scope=apphostconfig,value='#{args.appname}'\""
 end
+
