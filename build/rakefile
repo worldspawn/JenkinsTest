@@ -28,6 +28,7 @@ end
 
 desc "DeployIt"
 exec :deployIt, :deployproject do |cmd, args|
+	puts "deployproject is #{args.deployproject}"
   cmd.command = "src/#{args.deployproject}/obj/#{config}/Package/#{args.deployproject}.deploy.cmd"
   cmd.parameters "/Y"
 end
